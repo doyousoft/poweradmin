@@ -166,7 +166,7 @@ if ( $perm_view == "none" || $perm_view == "own" && $user_is_zone_owner == "0" )
 				}
 				echo "    <tr>\n";
 				
-				if ( $domain_type == "SLAVE" || $perm_content_edit == "none" || $perm_content_edit == "own" && $user_is_zone_owner == "0" ) {
+				if ( $domain_type == "SLAVE" || $perm_content_edit == "none" || !is_null($zone_template_id) || $perm_content_edit == "own" && $user_is_zone_owner == "0") {
 					echo "     <td class=\"n\">&nbsp;</td>\n";
 				} else {
 					echo "     <td class=\"n\">\n";
@@ -237,14 +237,15 @@ if ( $perm_view == "none" || $perm_view == "own" && $user_is_zone_owner == "0" )
                         echo "       <td><input class=\"wide\" type=\"text\" name=\"templ_descr\" value=\"\"></td>\n";
                         echo "      </tr>\n";
 			echo "    </table>\n";
-			echo "     <input type=\"submit\" class=\"button\" name=\"commit\" value=\"" . _('Commit changes') . "\">\n";
-			echo "     <input type=\"reset\" class=\"button\" name=\"reset\" value=\"" . _('Reset changes') . "\">\n"; 
+			if ( is_null($zone_template_id) && ( $perm_content_edit == "all" || $perm_content_edit == "own" && $user_is_zone_owner == "1") ) {
+				echo "     <input type=\"submit\" class=\"button\" name=\"commit\" value=\"" . _('Commit changes') . "\">\n";
+				echo "     <input type=\"reset\" class=\"button\" name=\"reset\" value=\"" . _('Reset changes') . "\">\n";
+			}
 			echo "     <input type=\"submit\" class=\"button\" name=\"save_as\" value=\"" . _('Save as template') . "\">\n";
 			echo "    </form>\n";
 		}
 		
-		if ( $perm_content_edit == "all" || $perm_content_edit == "own" && $user_is_zone_owner == "1" ) {
-			if ( $domain_type != "SLAVE") {
+		if ( is_null($zone_template_id) && $domain_type != "SLAVE" && ( $perm_content_edit == "all" || $perm_content_edit == "own" && $user_is_zone_owner == "1") ) {
 				$zone_name = get_zone_name_from_id($zone_id);
 				echo "     <form method=\"post\" action=\"add_record.php?id=".$zone_id."\">\n";
 				echo "      <input type=\"hidden\" name=\"domain\" value=\"" . $zone_id . "\">\n";
@@ -292,7 +293,6 @@ if ( $perm_view == "none" || $perm_view == "own" && $user_is_zone_owner == "0" )
 	            echo "      <input type=\"submit\" name=\"commit\" value=\"" .  _('Add record') . "\" class=\"button\">\n";
 		    echo "      $rev";
 	            echo "     </form>\n";
-			}
 		}
 
 		echo "   <div id=\"meta\">\n";

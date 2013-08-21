@@ -458,7 +458,7 @@ function add_domain($domain, $owner, $type, $slave_master, $zone_template)
 
 			if (PEAR::isError($domain_id)) { error($domain_id->getMessage()); return false; }
 
-			$response = $db->query("INSERT INTO zones (domain_id, owner, zone_templ_id) VALUES (".$db->quote($domain_id, 'integer').", ".$db->quote($owner, 'integer').", ".$db->quote(($zone_template == "none") ? 0 : $zone_template, 'integer').")");
+			$response = $db->query("INSERT INTO zones (domain_id, owner, zone_templ_id) VALUES (".$db->quote($domain_id, 'integer').", ".$db->quote($owner, 'integer').", ".(($zone_template == "none") ? "NULL" : $db->quote($zone_template, 'integer')).")");
 			if (PEAR::isError($response)) { error($response->getMessage()); return false; }
 
 			if ($type == "SLAVE") {
@@ -601,7 +601,7 @@ function add_owner_to_zone($zone_id, $user_id)
 				$db->query("INSERT INTO zones (domain_id, owner, zone_templ_id) VALUES("
 					. $db->quote($zone_id, 'integer') . ", "
 					. $db->quote($user_id, 'integer') . ", "
-					. $db->quote($zone_templ_id, 'integer') . ")"
+					. (($zone_templ_id == 0) ? "NULL" : $db->quote($zone_templ_id, 'integer')) . ")"
 				);
 			}
 			return true;
@@ -1487,7 +1487,7 @@ function update_zone_records($zone_id, $zone_template) {
         }
 
         $query = "UPDATE zones
-                    SET zone_templ_id = " . $db->quote($zone_template, 'integer') . "
+                    SET zone_templ_id = " . (($zone_template == 0) ? "NULL" : $db->quote($zone_template, 'integer')) . "
                     WHERE domain_id = " . $db->quote($zone_id, 'integer') ;
 	$response = $db->exec($query);
 

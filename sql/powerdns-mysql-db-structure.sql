@@ -26,6 +26,7 @@ CREATE TABLE records (
 CREATE INDEX rec_name_index ON records(name);
 CREATE INDEX nametype_index ON records(name,type);
 CREATE INDEX domain_id ON records(domain_id);
+ALTER TABLE records ADD CONSTRAINT `records_domain_id_constraint` FOREIGN KEY (`domain_id`) REFERENCES `domains` (`id`) ON DELETE CASCADE;
 
 create table supermasters (
   ip VARCHAR(25) NOT NULL, 
